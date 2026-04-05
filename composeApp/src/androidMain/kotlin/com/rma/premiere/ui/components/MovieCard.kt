@@ -11,17 +11,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rma.premiere.model.Movie
+import coil3.compose.AsyncImage
+import com.rma.premiere.data.model.Movie
 import com.rma.premiere.theme.ContentColor
 import com.rma.premiere.theme.GenreChipColor
 import com.rma.premiere.theme.StarColor
@@ -38,16 +42,17 @@ fun MovieCard(movie: Movie) {
             .padding(12.dp),
         verticalAlignment = Alignment.Top
     ) {
-        Box(
+        AsyncImage(
+            model = "https://image.tmdb.org/t/p/w185${movie.posterPath}",
+            contentDescription = movie.title,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .width(80.dp)
-                .height(100.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(GenreChipColor),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "🎬", fontSize = 28.sp)
-        }
+                .height(120.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            placeholder = painterResource(android.R.drawable.ic_menu_gallery),
+            error = painterResource(android.R.drawable.ic_menu_gallery)
+        )
         Spacer(modifier = Modifier.width(12.dp))
 
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -61,7 +66,7 @@ fun MovieCard(movie: Movie) {
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = movie.year,
+                text = movie.year?.toString() ?: "N/A",
                 color = WhiteSecondary,
                 fontSize = 13.sp,
             )
@@ -70,14 +75,14 @@ fun MovieCard(movie: Movie) {
                 Text(text = "⭐", fontSize = 13.sp)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = movie.rating.toString(),
+                    text = movie.imdbRating?.toString() ?: "N/A",
                     color = StarColor,
                     fontWeight = FontWeight.Bold,
                     fontSize = 13.sp,
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = movie.votes,
+                    text = movie.imdbVotes?.toString() ?: "N/A",
                     color = WhiteSecondary,
                     fontSize = 12.sp
                 )
@@ -95,7 +100,7 @@ fun MovieCard(movie: Movie) {
                             .padding(horizontal = 8.dp, vertical = 3.dp)
                     ) {
                         Text(
-                            text = genre,
+                            text = genre.name,
                             color = WhiteSecondary,
                             fontSize = 11.sp
                         )
