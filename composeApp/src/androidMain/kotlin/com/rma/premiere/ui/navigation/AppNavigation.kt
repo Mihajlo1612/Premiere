@@ -1,6 +1,7 @@
 package com.rma.premiere.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -22,16 +23,23 @@ fun AppNavigation() {
         navController = navController,
         startDestination = MoviesListRoute
     ) {
-        composable<MoviesListRoute> {
+        composable<MoviesListRoute> { backStackEntry ->
+            val query = backStackEntry.savedStateHandle.getStateFlow<String?>("query", null)
+                .collectAsState()
             MoviesListScreen(
-                onFilterClick = {
-                    navController.navigate(FilterMoviesRoute)
-                }
+                onFilterClick = { navController.navigate(FilterMoviesRoute) },
+                query = query.value
             )
         }
         composable<FilterMoviesRoute> {
             FilterMoviesScreen(
                 onBackClick = {
+                    navController.popBackStack()
+                },
+                onApplyFilters = { query ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("query", query)
                     navController.popBackStack()
                 }
 

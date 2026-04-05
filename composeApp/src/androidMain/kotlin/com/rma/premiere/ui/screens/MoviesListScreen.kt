@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +24,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.rma.premiere.theme.ContentColor
 import com.rma.premiere.theme.BackgroundColor
 import com.rma.premiere.theme.RedColor
@@ -36,13 +40,24 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun MoviesListScreen(
     onFilterClick: () -> Unit,
+    query: String? = null,
     viewModel: MoviesListViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var expanded by remember { mutableStateOf(false) }
-    var selectedSort by remember { mutableStateOf("Rating") }
-    val sortOptions = listOf("Rating", "Year", "Title", "Votes")
+    val sortOptions = listOf(
+        "imdb_rating" to "Rating",
+        "year" to "Year",
+        "title" to "Title",
+        "popularity" to "Popularity"
+    )
 
+    LaunchedEffect(query) {
+        println("QUERY_DEBUG: savedQuery = $query")
+        query?.let {
+            viewModel.onEvent(MoviesListEvent.OnQueryChanged(it))
+        }
+    }
 
     Scaffold(
         containerColor = BackgroundColor,
@@ -114,9 +129,8 @@ fun MoviesListScreen(
                             .clickable { expanded = true }
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
-                        Text(text = "Sort: ", color = WhiteColor, fontSize = 13.sp)
                         Text(
-                            text = "$selectedSort ↓",
+                            text = "Sort: ${sortOptions.find { it.first == state.sortBy }?.second ?: "Rating"} ${if (state.sortOrder == "asc") "↑" else "↓"}",
                             color = WhiteColor,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold
@@ -138,12 +152,17 @@ fun MoviesListScreen(
                             DropdownMenuItem(
                                 text = {
                                     Text(
-                                        text = option,
-                                        color = if (option == selectedSort) RedColor else WhiteColor
+                                        text = option.second,
+                                        color = if (state.sortBy == option.first) RedColor else WhiteColor
                                     )
                                 },
                                 onClick = {
-                                    selectedSort = option
+                                    viewModel.onEvent(
+                                        MoviesListEvent.OnSortChanged(
+                                            sortBy = option.first,
+                                            sortOrder = if (option.first == "title") "asc" else "desc"
+                                        )
+                                    )
                                     expanded = false
                                 }
                             )
@@ -156,7 +175,7 @@ fun MoviesListScreen(
                     fontSize = 13.sp
                 )
             }
-            // Loading, Error i Success stanja
+            // Loading, Error i Success states
             when {
                 state.isLoading -> {
                     Box(
@@ -197,4 +216,6 @@ fun MoviesListScreen(
         }
     }
 }
+
+
 

@@ -28,7 +28,7 @@ class MoviesService(private val client: HttpClient) {
             minYear?.let { parameter("min_year", it) }
             maxYear?.let { parameter("max_year", it) }
             minRating?.let { parameter("min_rating", it) }
-            sortBy?.let { parameter("sory_by", it) }
+            sortBy?.let { parameter("sort_by", it) }
             sortOrder?.let { parameter("sort_order", it) }
         }.body()
     }

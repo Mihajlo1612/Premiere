@@ -49,17 +49,25 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rma.premiere.theme.BackgroundColor
 import com.rma.premiere.theme.ContentColor
 import com.rma.premiere.theme.RedColor
 import com.rma.premiere.theme.StarColor
 import com.rma.premiere.theme.WhiteColor
 import com.rma.premiere.theme.WhiteSecondary
+import org.koin.compose.viewmodel.koinViewModel
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterMoviesScreen(onBackClick: () -> Unit) {
+fun FilterMoviesScreen(
+    onBackClick: () -> Unit,
+    onApplyFilters: (query: String) -> Unit,
+    viewModel: FilterMoviesViewModel = koinViewModel()
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
     Scaffold(
         containerColor = BackgroundColor,
         topBar = {
@@ -81,7 +89,7 @@ fun FilterMoviesScreen(onBackClick: () -> Unit) {
                     )
                 },
                 actions = {
-                    TextButton(onClick = { }) {
+                    TextButton(onClick = { viewModel.onEvent(FilterMoviesEvent.OnClearAll) }) {
                         Text(
                             text = "Clear All",
                             color = RedColor,
@@ -112,8 +120,8 @@ fun FilterMoviesScreen(onBackClick: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = "",
-                onValueChange = { },
+                value = state.query,
+                onValueChange = { viewModel.onEvent(FilterMoviesEvent.OnQueryChanged(it)) },
                 placeholder = {
                     Text(
                         text = "Search by movie title...",
@@ -309,7 +317,7 @@ fun FilterMoviesScreen(onBackClick: () -> Unit) {
             }
             Spacer(modifier = Modifier.height(32.dp))
             Button(
-                onClick = { },
+                onClick = { onApplyFilters(state.query) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),

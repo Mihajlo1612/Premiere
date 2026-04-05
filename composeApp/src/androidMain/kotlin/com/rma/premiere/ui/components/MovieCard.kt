@@ -31,6 +31,7 @@ import com.rma.premiere.theme.GenreChipColor
 import com.rma.premiere.theme.StarColor
 import com.rma.premiere.theme.WhiteColor
 import com.rma.premiere.theme.WhiteSecondary
+import java.util.Locale
 
 @Composable
 fun MovieCard(movie: Movie) {
@@ -39,7 +40,8 @@ fun MovieCard(movie: Movie) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(ContentColor)
-            .padding(12.dp),
+            .padding(12.dp)
+            .height(100.dp),
         verticalAlignment = Alignment.Top
     ) {
         AsyncImage(
@@ -47,7 +49,7 @@ fun MovieCard(movie: Movie) {
             contentDescription = movie.title,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .width(80.dp)
+                .width(70.dp)
                 .height(120.dp)
                 .clip(RoundedCornerShape(8.dp)),
             placeholder = painterResource(android.R.drawable.ic_menu_gallery),
@@ -60,7 +62,7 @@ fun MovieCard(movie: Movie) {
                 text = movie.title,
                 color = WhiteColor,
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
+                fontSize = 18.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -68,7 +70,7 @@ fun MovieCard(movie: Movie) {
             Text(
                 text = movie.year?.toString() ?: "N/A",
                 color = WhiteSecondary,
-                fontSize = 13.sp,
+                fontSize = 14.sp,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -78,11 +80,11 @@ fun MovieCard(movie: Movie) {
                     text = movie.imdbRating?.toString() ?: "N/A",
                     color = StarColor,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 13.sp,
+                    fontSize = 15.sp,
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = movie.imdbVotes?.toString() ?: "N/A",
+                    text = formatVotes(movie.imdbVotes),
                     color = WhiteSecondary,
                     fontSize = 12.sp
                 )
@@ -102,11 +104,20 @@ fun MovieCard(movie: Movie) {
                         Text(
                             text = genre.name,
                             color = WhiteSecondary,
-                            fontSize = 11.sp
+                            fontSize = 13.sp
                         )
                     }
                 }
             }
         }
+    }
+}
+
+fun formatVotes(votes: Int?): String {
+    if (votes == null) return "N/A"
+    return when {
+        votes >= 1_000_000 -> String.format(Locale.US, "%.1fM votes", votes / 1_000_000.0)
+        votes >= 1_000 -> "${votes / 1_000}K votes"
+        else -> "$votes votes"
     }
 }
