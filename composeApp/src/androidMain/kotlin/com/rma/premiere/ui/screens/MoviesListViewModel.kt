@@ -28,20 +28,47 @@ class MoviesListViewModel(
                 setState { copy(query = event.query) }
                 loadMovies(query = event.query)
             }
+
+            is MoviesListEvent.OnFiltersApplied -> {
+                setState {
+                    copy(
+                        query = event.query ?: "",
+                        genreId = event.genreId,
+                        minYear = event.minYear,
+                        maxYear = event.maxYear,
+                        minRating = event.minRating
+                    )
+                }
+                loadMovies(
+                    query = event.query ?: "",
+                    genreId = event.genreId,
+                    minYear = event.minYear,
+                    maxYear = event.maxYear,
+                    minRating = event.minRating
+                )
+            }
         }
     }
 
     private fun loadMovies(
         sortBy: String = uiState.value.sortBy,
         sortOrder: String = uiState.value.sortOrder,
-        query: String = uiState.value.query
+        query: String = uiState.value.query,
+        genreId: Int? = uiState.value.genreId,
+        minYear: Int? = uiState.value.minYear,
+        maxYear: Int? = uiState.value.maxYear,
+        minRating: Float? = uiState.value.minRating
     ) {
         viewModelScope.launch {
             setState { copy(isLoading = true, error = null) }
             repository.getMovies(
                 sortBy = sortBy,
                 sortOrder = sortOrder,
-                query = query.ifEmpty { null }
+                query = query.ifEmpty { null },
+                genreId = genreId,
+                minYear = minYear,
+                maxYear = maxYear,
+                minRating = minRating
             ).fold(
                 onSuccess = { response ->
                     setState {

@@ -1,6 +1,7 @@
 package com.rma.premiere.data.repository
 
 import com.rma.premiere.data.api.MoviesService
+import com.rma.premiere.data.model.Genre
 import com.rma.premiere.data.model.Movie
 import com.rma.premiere.data.model.PaginatedResponse
 import de.jensklingenberg.ktorfit.http.Query
@@ -31,6 +32,14 @@ class MovieRepository(private val moviesService: MoviesService) {
                 sortOrder = sortOrder
             )
             Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getGenres(): Result<List<Genre>> {
+        return try {
+            Result.success(moviesService.getGenres())
         } catch (e: Exception) {
             Result.failure(e)
         }

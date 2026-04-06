@@ -11,5 +11,9 @@ data class MoviesListState(
     val totalMovies: Int = 0,
     val sortBy: String = "imdb_rating",
     val sortOrder: String = "desc",
-    val query: String = ""
+    val query: String = "",
+    val genreId: Int? = null,
+    val minYear: Int? = null,
+    val maxYear: Int? = null,
+    val minRating: Float? = null
 ) : UiState

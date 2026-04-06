@@ -24,9 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.rma.premiere.theme.ContentColor
 import com.rma.premiere.theme.BackgroundColor
 import com.rma.premiere.theme.RedColor
@@ -41,6 +38,10 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MoviesListScreen(
     onFilterClick: () -> Unit,
     query: String? = null,
+    genreId: Int? = null,
+    minYear: Int? = null,
+    maxYear: Int? = null,
+    minRating: Float? = null,
     viewModel: MoviesListViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -52,11 +53,17 @@ fun MoviesListScreen(
         "popularity" to "Popularity"
     )
 
-    LaunchedEffect(query) {
-        println("QUERY_DEBUG: savedQuery = $query")
-        query?.let {
-            viewModel.onEvent(MoviesListEvent.OnQueryChanged(it))
-        }
+    LaunchedEffect(query, genreId, minYear, maxYear, minRating) {
+        viewModel.onEvent(
+            MoviesListEvent.OnFiltersApplied(
+                query = query,
+                genreId = genreId,
+                minYear = minYear,
+                maxYear = maxYear,
+                minRating = minRating
+            )
+        )
+
     }
 
     Scaffold(

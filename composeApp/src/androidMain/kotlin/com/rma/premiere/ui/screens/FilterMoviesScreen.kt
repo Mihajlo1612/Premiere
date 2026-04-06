@@ -1,6 +1,7 @@
 package com.rma.premiere.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +22,6 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -37,10 +36,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,7 +58,7 @@ import java.util.Locale
 @Composable
 fun FilterMoviesScreen(
     onBackClick: () -> Unit,
-    onApplyFilters: (query: String) -> Unit,
+    onApplyFilters: (query: String, genreId: Int?, minYear: Int, maxYear: Int, minRating: Float) -> Unit,
     viewModel: FilterMoviesViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -149,50 +144,34 @@ fun FilterMoviesScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            val genres = listOf(
-                "Action", "Adventure", "Animation", "Comedy",
-                "Crime", "Drama", "Family", "Fantasy", "History",
-                "Horror", "Music", "Mystery", "Romance",
-                "Science Fiction", "Thriller", "War", "Western"
-            )
-
-            var selectedGenres by remember { mutableStateOf(setOf<String>()) }
-
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(0.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                genres.forEach { genre ->
-                    val isSelected = genre in selectedGenres
-                    FilterChip(
-                        selected = isSelected,
-                        onClick = {
-                            selectedGenres = if (isSelected) {
-                                selectedGenres - genre
-                            } else {
-                                selectedGenres + genre
+                state.genres.forEach { genre ->
+                    val isSelected = state.selectedGenreId == genre.id
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(if (isSelected) RedColor else ContentColor)
+                            .clickable {
+                                viewModel.onEvent(
+                                    FilterMoviesEvent.OnGenreSelected(
+                                        if (isSelected) null else genre.id
+                                    )
+                                )
                             }
-                        },
-                        label = {
-                            Text(
-                                text = genre,
-                                color = WhiteColor,
-                                fontSize = 12.sp
-                            )
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            containerColor = ContentColor,
-                            selectedContainerColor = RedColor
-                        ),
-                        border = FilterChipDefaults.filterChipBorder(
-                            enabled = true,
-                            selected = isSelected,
-                            borderColor = ContentColor,
-                            selectedBorderColor = RedColor
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = genre.name,
+                            color = if (isSelected) WhiteColor else WhiteSecondary,
+                            fontSize = 14.sp
                         )
-                    )
+                    }
                 }
             }
+
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "YEAR RANGE",
@@ -203,9 +182,6 @@ fun FilterMoviesScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            var yearFrom by remember { mutableStateOf("1920") }
-            var yearTo by remember { mutableStateOf("2025") }
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -215,8 +191,12 @@ fun FilterMoviesScreen(
                     Text(text = "From", color = WhiteSecondary, fontSize = 12.sp)
                     Spacer(modifier = Modifier.height(4.dp))
                     OutlinedTextField(
-                        value = yearFrom,
-                        onValueChange = { yearFrom = it },
+                        value = state.minYear.toString(),
+                        onValueChange = {
+                            it.toIntOrNull()?.let { year ->
+                                viewModel.onEvent(FilterMoviesEvent.OnMinYearChanged(year))
+                            }
+                        },
                         modifier = Modifier.width(170.dp),
                         shape = RoundedCornerShape(12.dp),
                         textStyle = LocalTextStyle.current.copy(
@@ -246,8 +226,12 @@ fun FilterMoviesScreen(
                     Text(text = "To", color = WhiteSecondary, fontSize = 12.sp)
                     Spacer(modifier = Modifier.height(4.dp))
                     OutlinedTextField(
-                        value = yearTo,
-                        onValueChange = { yearTo = it },
+                        value = state.maxYear.toString(),
+                        onValueChange = {
+                            it.toIntOrNull()?.let { year ->
+                                viewModel.onEvent(FilterMoviesEvent.OnMaxYearChanged(year))
+                            }
+                        },
                         modifier = Modifier.width(170.dp),
                         shape = RoundedCornerShape(12.dp),
                         textStyle = LocalTextStyle.current.copy(
@@ -278,15 +262,13 @@ fun FilterMoviesScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            var minRating by remember { mutableFloatStateOf(0f) }
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Slider(
-                    value = minRating,
-                    onValueChange = { minRating = it },
+                    value = state.minRating,
+                    onValueChange = { viewModel.onEvent(FilterMoviesEvent.OnMinRatingChanged(it)) },
                     valueRange = 0f..10f,
                     modifier = Modifier.weight(1f),
                     colors = SliderDefaults.colors(
@@ -307,7 +289,7 @@ fun FilterMoviesScreen(
                         Text(text = "⭐", fontSize = 13.sp)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = String.format(Locale.US, "%.1f", minRating),
+                            text = String.format(Locale.US, "%.1f", state.minRating),
                             color = StarColor,
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp
@@ -317,7 +299,15 @@ fun FilterMoviesScreen(
             }
             Spacer(modifier = Modifier.height(32.dp))
             Button(
-                onClick = { onApplyFilters(state.query) },
+                onClick = {
+                    onApplyFilters(
+                        state.query,
+                        state.selectedGenreId,
+                        state.minYear,
+                        state.maxYear,
+                        state.minRating
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),

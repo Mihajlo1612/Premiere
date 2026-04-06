@@ -22,5 +22,5 @@ val appModule = module {
     // ViewModel
     viewModel { MoviesListViewModel(get()) }
 
-    viewModel { FilterMoviesViewModel() }
+    viewModel { FilterMoviesViewModel(get()) }
 }

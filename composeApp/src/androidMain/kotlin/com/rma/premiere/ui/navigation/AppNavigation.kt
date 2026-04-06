@@ -26,9 +26,18 @@ fun AppNavigation() {
         composable<MoviesListRoute> { backStackEntry ->
             val query = backStackEntry.savedStateHandle.getStateFlow<String?>("query", null)
                 .collectAsState()
+            val genreId = backStackEntry.savedStateHandle.getStateFlow<Int?>("genreId", null)
+            val minYear = backStackEntry.savedStateHandle.getStateFlow<Int?>("minYear", null)
+            val maxYear = backStackEntry.savedStateHandle.getStateFlow<Int?>("maxYear", null)
+            val minRating = backStackEntry.savedStateHandle.getStateFlow<Float?>("minRating", null)
+
             MoviesListScreen(
                 onFilterClick = { navController.navigate(FilterMoviesRoute) },
-                query = query.value
+                query = query.value,
+                genreId = genreId.value,
+                minYear = minYear.value,
+                maxYear = maxYear.value,
+                minRating = minRating.value
             )
         }
         composable<FilterMoviesRoute> {
@@ -36,10 +45,14 @@ fun AppNavigation() {
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onApplyFilters = { query ->
-                    navController.previousBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("query", query)
+                onApplyFilters = { query, genreId, minYear, maxYear, minRating ->
+                    navController.previousBackStackEntry?.savedStateHandle?.apply {
+                        set("query", query)
+                        set("genreId", genreId)
+                        set("minYear", minYear)
+                        set("maxYear", maxYear)
+                        set("minRating", minRating)
+                    }
                     navController.popBackStack()
                 }
 

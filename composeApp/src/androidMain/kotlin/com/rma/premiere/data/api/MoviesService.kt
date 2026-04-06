@@ -1,5 +1,6 @@
 package com.rma.premiere.data.api
 
+import com.rma.premiere.data.model.Genre
 import com.rma.premiere.data.model.Movie
 import com.rma.premiere.data.model.PaginatedResponse
 import io.ktor.client.HttpClient
@@ -31,5 +32,9 @@ class MoviesService(private val client: HttpClient) {
             sortBy?.let { parameter("sort_by", it) }
             sortOrder?.let { parameter("sort_order", it) }
         }.body()
+    }
+
+    suspend fun getGenres(): List<Genre> {
+        return client.get("https://rma.finlab.rs/genres").body()
     }
 }
