@@ -5,15 +5,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 import com.rma.premiere.ui.screens.MoviesListScreen
 import com.rma.premiere.ui.screens.FilterMoviesScreen
+import com.rma.premiere.ui.screens.MovieDetaisScreen
 
 @Serializable
 object MoviesListRoute
 
 @Serializable
 object FilterMoviesRoute
+
+@Serializable
+data class MovieDetailsRoute(val imdbId: String)
 
 @Composable
 fun AppNavigation() {
@@ -26,13 +31,18 @@ fun AppNavigation() {
         composable<MoviesListRoute> { backStackEntry ->
             val query = backStackEntry.savedStateHandle.getStateFlow<String?>("query", null)
                 .collectAsState()
-            val genreId = backStackEntry.savedStateHandle.getStateFlow<Int?>("genreId", null)
-            val minYear = backStackEntry.savedStateHandle.getStateFlow<Int?>("minYear", null)
-            val maxYear = backStackEntry.savedStateHandle.getStateFlow<Int?>("maxYear", null)
+            val genreId =
+                backStackEntry.savedStateHandle.getStateFlow<Int?>("genreId", null).collectAsState()
+            val minYear =
+                backStackEntry.savedStateHandle.getStateFlow<Int?>("minYear", null).collectAsState()
+            val maxYear =
+                backStackEntry.savedStateHandle.getStateFlow<Int?>("maxYear", null).collectAsState()
             val minRating = backStackEntry.savedStateHandle.getStateFlow<Float?>("minRating", null)
+                .collectAsState()
 
             MoviesListScreen(
                 onFilterClick = { navController.navigate(FilterMoviesRoute) },
+                onMovieClick = { imdbId -> navController.navigate(MovieDetailsRoute(imdbId)) },
                 query = query.value,
                 genreId = genreId.value,
                 minYear = minYear.value,
@@ -56,6 +66,13 @@ fun AppNavigation() {
                     navController.popBackStack()
                 }
 
+            )
+        }
+        composable<MovieDetailsRoute> { backStackEntry ->
+            val route = backStackEntry.toRoute<MovieDetailsRoute>()
+            MovieDetaisScreen(
+                imdbId = route.imdbId,
+                onBackClick = { navController.popBackStack() }
             )
         }
     }

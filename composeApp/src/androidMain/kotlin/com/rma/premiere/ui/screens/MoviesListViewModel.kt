@@ -3,7 +3,6 @@ package com.rma.premiere.ui.screens
 import androidx.lifecycle.viewModelScope
 import com.rma.premiere.data.repository.MovieRepository
 import com.rma.premiere.ui.base.BaseViewModel
-import io.ktor.utils.io.core.ByteOrder
 import kotlinx.coroutines.launch
 
 class MoviesListViewModel(

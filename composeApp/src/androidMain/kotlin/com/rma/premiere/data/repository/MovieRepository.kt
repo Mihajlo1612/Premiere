@@ -3,8 +3,11 @@ package com.rma.premiere.data.repository
 import com.rma.premiere.data.api.MoviesService
 import com.rma.premiere.data.model.Genre
 import com.rma.premiere.data.model.Movie
+import com.rma.premiere.data.model.MovieDetails
+import com.rma.premiere.data.model.MovieImages
 import com.rma.premiere.data.model.PaginatedResponse
-import de.jensklingenberg.ktorfit.http.Query
+import com.rma.premiere.data.model.PersonSummary
+import com.rma.premiere.data.model.Video
 
 class MovieRepository(private val moviesService: MoviesService) {
 
@@ -40,6 +43,38 @@ class MovieRepository(private val moviesService: MoviesService) {
     suspend fun getGenres(): Result<List<Genre>> {
         return try {
             Result.success(moviesService.getGenres())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getMovieDetails(imdbId: String): Result<MovieDetails> {
+        return try {
+            Result.success(moviesService.getMovieDetails(imdbId))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getMovieImages(imdbId: String): Result<MovieImages> {
+        return try {
+            Result.success(moviesService.getMovieImages(imdbId))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getMovieCast(imdbId: String): Result<List<PersonSummary>> {
+        return try {
+            Result.success(moviesService.getMovieCast(imdbId).items)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getMovieVideos(imdbId: String): Result<List<Video>> {
+        return try {
+            Result.success(moviesService.getMovieVideos(imdbId))
         } catch (e: Exception) {
             Result.failure(e)
         }

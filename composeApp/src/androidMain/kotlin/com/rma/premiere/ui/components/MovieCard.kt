@@ -1,6 +1,7 @@
 package com.rma.premiere.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,15 +31,19 @@ import com.rma.premiere.theme.GenreChipColor
 import com.rma.premiere.theme.StarColor
 import com.rma.premiere.theme.WhiteColor
 import com.rma.premiere.theme.WhiteSecondary
-import java.util.Locale
+import com.rma.premiere.util.formatVotes
 
 @Composable
-fun MovieCard(movie: Movie) {
+fun MovieCard(
+    movie: Movie,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(ContentColor)
+            .clickable { onClick() }
             .padding(12.dp)
             .height(100.dp),
         verticalAlignment = Alignment.Top
@@ -113,11 +117,3 @@ fun MovieCard(movie: Movie) {
     }
 }
 
-fun formatVotes(votes: Int?): String {
-    if (votes == null) return "N/A"
-    return when {
-        votes >= 1_000_000 -> String.format(Locale.US, "%.1fM votes", votes / 1_000_000.0)
-        votes >= 1_000 -> "${votes / 1_000}K votes"
-        else -> "$votes votes"
-    }
-}

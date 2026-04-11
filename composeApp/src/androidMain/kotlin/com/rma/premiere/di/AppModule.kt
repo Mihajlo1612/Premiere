@@ -4,6 +4,7 @@ import com.rma.premiere.data.api.MoviesService
 import com.rma.premiere.data.api.createHttpClient
 import com.rma.premiere.data.repository.MovieRepository
 import com.rma.premiere.ui.screens.FilterMoviesViewModel
+import com.rma.premiere.ui.screens.MovieDetailsViewModel
 import com.rma.premiere.ui.screens.MoviesListViewModel
 import io.ktor.client.HttpClient
 import org.koin.core.module.dsl.viewModel
@@ -21,6 +22,6 @@ val appModule = module {
 
     // ViewModel
     viewModel { MoviesListViewModel(get()) }
-
     viewModel { FilterMoviesViewModel(get()) }
+    viewModel { MovieDetailsViewModel(get()) }
 }

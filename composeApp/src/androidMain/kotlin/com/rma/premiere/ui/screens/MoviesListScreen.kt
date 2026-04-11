@@ -37,6 +37,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun MoviesListScreen(
     onFilterClick: () -> Unit,
+    onMovieClick: (String) -> Unit,
     query: String? = null,
     genreId: Int? = null,
     minYear: Int? = null,
@@ -215,7 +216,10 @@ fun MoviesListScreen(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         items(state.movies) { movie ->
-                            MovieCard(movie = movie)
+                            MovieCard(
+                                movie = movie,
+                                onClick = { onMovieClick(movie.imdbId) }
+                            )
                         }
                     }
                 }
