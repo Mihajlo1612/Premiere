@@ -7,14 +7,9 @@ import com.rma.premiere.data.model.MovieImages
 import com.rma.premiere.data.model.PaginatedResponse
 import com.rma.premiere.data.model.PersonSummary
 import com.rma.premiere.data.model.Video
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
-import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
 
-class MoviesService(private val client: HttpClient) {
+class MoviesService(private val api: MoviesApi) {
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -32,45 +27,37 @@ class MoviesService(private val client: HttpClient) {
         sortBy: String? = null,
         sortOrder: String? = null
     ): PaginatedResponse<Movie> {
-        return client.get("https://rma.finlab.rs/movies") {
-            parameter("page", page)
-            parameter("page_size", pageSize)
-            query?.let { parameter("query", it) }
-            genreId?.let { parameter("genre_id", it) }
-            minYear?.let { parameter("min_year", it) }
-            maxYear?.let { parameter("max_year", it) }
-            minRating?.let { parameter("min_rating", it) }
-            sortBy?.let { parameter("sort_by", it) }
-            sortOrder?.let { parameter("sort_order", it) }
-        }.body()
+        return api.getMovies(
+            page = page,
+            pageSize = pageSize,
+            query = query,
+            genreId = genreId,
+            minYear = minYear,
+            maxYear = maxYear,
+            minRating = minRating,
+            sortBy = sortBy,
+            sortOrder = sortOrder
+        )
     }
 
     suspend fun getGenres(): List<Genre> {
-        return client.get("https://rma.finlab.rs/genres").body()
+        return api.getGenres()
     }
 
     suspend fun getMovieDetails(imdbId: String): MovieDetails {
-        return client.get("https://rma.finlab.rs/movies/$imdbId").body()
+        return api.getMovieDetails(imdbId)
     }
 
     suspend fun getMovieImages(imdbId: String): MovieImages {
-        return client.get("https://rma.finlab.rs/movies/$imdbId/images") {
-            parameter("type", "backdrop")
-        }.body()
+        return api.getMovieImages(imdbId)
     }
 
     suspend fun getMovieCast(imdbId: String): PaginatedResponse<PersonSummary> {
-        val response = client.get("https://rma.finlab.rs/movies/$imdbId/cast") {
-            parameter("page_size", 10)
-        }
-        return json.decodeFromString(response.bodyAsText())
+        return api.getMovieCast(imdbId)
     }
 
     suspend fun getMovieVideos(imdbId: String): List<Video> {
-        val response = client.get("https://rma.finlab.rs/movies/$imdbId/videos") {
-            parameter("type", "Trailer")
-        }
-        return json.decodeFromString(response.bodyAsText())
+        return api.getMovieVideos(imdbId)
     }
 }
 

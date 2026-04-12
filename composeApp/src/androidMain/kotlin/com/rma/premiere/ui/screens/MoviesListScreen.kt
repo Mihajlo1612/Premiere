@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,6 +48,13 @@ fun MoviesListScreen(
     viewModel: MoviesListViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val activeFiltersCount = listOfNotNull(
+        query?.takeIf { it.isNotEmpty() },
+        genreId?.toString(),
+        minRating?.takeIf { it > 0f }
+    ).size
+
     var expanded by remember { mutableStateOf(false) }
     val sortOptions = listOf(
         "imdb_rating" to "Rating",
@@ -85,27 +94,43 @@ fun MoviesListScreen(
                     }
                 },
                 actions = {
-                    Button(
-                        onClick = onFilterClick,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = RedColor
-                        ),
-                        shape = RoundedCornerShape(50),
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Tune,
-                            contentDescription = "Filter",
-                            tint = WhiteColor,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Filter",
-                            color = WhiteColor,
-                            fontSize = 14.sp
-                        )
+                    Box {
+                        Button(
+                            onClick = onFilterClick,
+                            colors = ButtonDefaults.buttonColors(containerColor = RedColor),
+                            shape = RoundedCornerShape(50),
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Tune,
+                                contentDescription = "Filter",
+                                tint = WhiteColor,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(text = "Filter", color = WhiteColor, fontSize = 14.sp)
+                        }
+                        if (activeFiltersCount > 0) {
+                            Box(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .offset(x = 4.dp, y = (-4).dp)
+                                    .align(Alignment.TopEnd)
+                                    .clip(CircleShape)
+                                    .background(WhiteColor),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = activeFiltersCount.toString(),
+                                    color = RedColor,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    lineHeight = 10.sp
+                                )
+                            }
+                        }
                     }
+                    Spacer(modifier = Modifier.width(8.dp))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = ContentColor
@@ -208,18 +233,35 @@ fun MoviesListScreen(
                 }
 
                 else -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .weight(1f),
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        items(state.movies) { movie ->
-                            MovieCard(
-                                movie = movie,
-                                onClick = { onMovieClick(movie.imdbId) }
-                            )
+                    when {
+                        state.movies.isEmpty() -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "No movies found",
+                                    color = WhiteSecondary,
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
+
+                        else -> {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                items(state.movies) { movie ->
+                                    MovieCard(
+                                        movie = movie,
+                                        onClick = { onMovieClick(movie.imdbId) }
+                                    )
+                                }
+                            }
                         }
                     }
                 }

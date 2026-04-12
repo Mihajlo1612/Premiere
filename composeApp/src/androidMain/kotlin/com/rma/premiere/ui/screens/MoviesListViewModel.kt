@@ -61,6 +61,8 @@ class MoviesListViewModel(
         viewModelScope.launch {
             setState { copy(isLoading = true, error = null) }
             repository.getMovies(
+                page = 1,
+                pageSize = 30,
                 sortBy = sortBy,
                 sortOrder = sortOrder,
                 query = query.ifEmpty { null },

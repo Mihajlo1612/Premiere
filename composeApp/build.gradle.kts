@@ -6,9 +6,14 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.ktorfitPlugin)
+    alias(libs.plugins.ksp)
 
 }
 
+ktorfit {
+    compilerPluginVersion.set("2.3.3")
+}
 
 kotlin {
     androidTarget {
@@ -48,7 +53,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation("io.insert-koin:koin-compose-viewmodel:4.2.0")
-            
+
             // Kotlinx Serialization
             implementation(libs.kotlinx.serialization.json)
 
@@ -94,5 +99,7 @@ android {
 
 dependencies {
     debugImplementation(libs.compose.uiTooling)
+    add("kspCommonMainMetadata", "de.jensklingenberg.ktorfit:ktorfit-ksp:2.7.1")
+    add("kspAndroid", "de.jensklingenberg.ktorfit:ktorfit-ksp:2.7.1")
 }
 
