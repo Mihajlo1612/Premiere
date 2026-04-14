@@ -1,27 +1,69 @@
-This is a Kotlin Multiplatform project targeting Android.
+Premiere
+This is a Kotlin Multiplatform project targeting Android, built with a modern tech stack and robust architecture.
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+Project Overview
+Shared Code: The /composeApp directory contains the core logic shared across applications.
 
-### Build and Run Android Application
+commonMain: Contains code common to all targets.
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+Platform Specifics: Other folders contain code compiled only for the specific platform (e.g., androidMain for Android-specific APIs).
 
----
+Architecture: Strictly follows the Model-View-Intent (MVI) pattern to ensure predictable state management.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+Tech Stack
+UI: Compose Multiplatform (Material 3)
+
+DI: Koin
+
+Networking: Ktor Client + Ktorfit
+
+Asynchronous: Kotlin Coroutines & Flow
+
+Serialization: Kotlinx Serialization
+
+Image loading: Coil
+
+SDK: Min SDK 26 | Target SDK 35
+
+Features
+MVI Architecture: Handles Loading, Success, and Error states seamlessly.
+
+Orientation Support: Maintains state across portrait and landscape modes.
+
+Modern Navigation: Single-activity pattern using Jetpack Navigation 2.
+
+Stability: Designed to prevent unknown states or app crashes.
+
+Build and Run Android Application
+To build and run the development version of the Android app, use the run configuration in your IDE or use the terminal:
+
+On macOS/Linux:
+
+Bash
+
+./gradlew :composeApp:assembleDebug
+On Windows:
+
+PowerShell
+
+.\gradlew.bat :composeApp:assembleDebug
+
+Project Structure
+Plaintext
+
+Premiere/
+├── composeApp/
+│   ├── src/
+│   │   ├── commonMain/   # Shared logic & MVI
+│   │   └── androidMain/  # Android specific implementation
+├── gradle/
+└── build.gradle.kts
+Build and Run (Detailed PowerShell)
+PowerShell
+
+# Install debug APK on a connected device
+.\gradlew :composeApp:installDebug
+
+# Run Unit tests
+.\gradlew :composeApp:test
+License: Distributed under the MIT License. See LICENSE for more information.
