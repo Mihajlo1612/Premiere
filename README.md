@@ -1,69 +1,105 @@
-Premiere
-This is a Kotlin Multiplatform project targeting Android, built with a modern tech stack and robust architecture.
+# Premiere
 
-Project Overview
-Shared Code: The /composeApp directory contains the core logic shared across applications.
+> A Kotlin Multiplatform project targeting Android, built with a modern tech stack and robust architecture.
 
-commonMain: Contains code common to all targets.
+---
 
-Platform Specifics: Other folders contain code compiled only for the specific platform (e.g., androidMain for Android-specific APIs).
+## About
 
-Architecture: Strictly follows the Model-View-Intent (MVI) pattern to ensure predictable state management.
+Premiere is a Kotlin Multiplatform (KMP) Android application that demonstrates clean architecture, modern UI patterns, and best practices for building scalable Android apps.
 
-Tech Stack
-UI: Compose Multiplatform (Material 3)
+---
 
-DI: Koin
+## Features
 
-Networking: Ktor Client + Ktorfit
+- **MVI Architecture** — Handles `Loading`, `Success`, and `Error` states seamlessly and predictably.
+- **Orientation Support** — Maintains state across portrait and landscape modes without data loss.
+- **Modern Navigation** — Single-activity pattern using Jetpack Navigation 2.
+- **Stability** — Designed to prevent unknown states or app crashes.
+- TODO: Add screenshots
 
-Asynchronous: Kotlin Coroutines & Flow
+---
 
-Serialization: Kotlinx Serialization
+## Tech Stack
 
-Image loading: Coil
+| Layer | Technology |
+|---|---|
+| **UI** | Compose Multiplatform (Material 3) |
+| **DI** | Koin |
+| **Networking** | Ktor Client + Ktorfit |
+| **Async** | Kotlin Coroutines & Flow |
+| **Serialization** | Kotlinx Serialization |
+| **Image Loading** | Coil |
 
-SDK: Min SDK 26 | Target SDK 35
+**SDK Requirements:**
+- Min SDK: 26
+- Target SDK: 35
 
-Features
-MVI Architecture: Handles Loading, Success, and Error states seamlessly.
+---
 
-Orientation Support: Maintains state across portrait and landscape modes.
+## Project Structure
 
-Modern Navigation: Single-activity pattern using Jetpack Navigation 2.
-
-Stability: Designed to prevent unknown states or app crashes.
-
-Build and Run Android Application
-To build and run the development version of the Android app, use the run configuration in your IDE or use the terminal:
-
-On macOS/Linux:
-
-Bash
-
-./gradlew :composeApp:assembleDebug
-On Windows:
-
-PowerShell
-
-.\gradlew.bat :composeApp:assembleDebug
-
-Project Structure
-Plaintext
-
+```
 Premiere/
 ├── composeApp/
 │   ├── src/
 │   │   ├── commonMain/   # Shared logic & MVI
-│   │   └── androidMain/  # Android specific implementation
+│   │   └── androidMain/  # Android-specific implementation
 ├── gradle/
 └── build.gradle.kts
-Build and Run (Detailed PowerShell)
-PowerShell
+```
 
-# Install debug APK on a connected device
+**Modules:**
+- `commonMain` — Contains code common to all targets (business logic, MVI, shared models).
+- `androidMain` — Contains Android-specific implementations and platform APIs.
+
+---
+
+## Getting Started
+
+### Requirements
+
+- Android Studio (latest stable recommended)
+- JDK 17+
+- Android device or emulator (API level 26+)
+
+### Build & Run
+
+**On macOS/Linux:**
+
+```bash
+./gradlew :composeApp:assembleDebug
+```
+
+**On Windows:**
+
+```powershell
+.\gradlew.bat :composeApp:assembleDebug
+```
+
+**Install on a connected device:**
+
+```powershell
 .\gradlew :composeApp:installDebug
+```
 
-# Run Unit tests
+**Run Unit Tests:**
+
+```powershell
 .\gradlew :composeApp:test
-License: Distributed under the MIT License. See LICENSE for more information.
+```
+
+---
+
+## Contributing
+
+- TODO: Add contribution guidelines
+- TODO: Add code style / formatting rules
+- TODO: Add PR template
+
+---
+
+## License
+
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for more information.
+
