@@ -1,27 +1,105 @@
-This is a Kotlin Multiplatform project targeting Android.
+# Premiere
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
-
-### Build and Run Android Application
-
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+> A Kotlin Multiplatform project targeting Android, built with a modern tech stack and robust architecture.
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## About
+
+Premiere is a Kotlin Multiplatform (KMP) Android application that demonstrates clean architecture, modern UI patterns, and best practices for building scalable Android apps.
+
+---
+
+## Features
+
+- **MVI Architecture** — Handles `Loading`, `Success`, and `Error` states seamlessly and predictably.
+- **Orientation Support** — Maintains state across portrait and landscape modes without data loss.
+- **Modern Navigation** — Single-activity pattern using Jetpack Navigation 2.
+- **Stability** — Designed to prevent unknown states or app crashes.
+- TODO: Add screenshots
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **UI** | Compose Multiplatform (Material 3) |
+| **DI** | Koin |
+| **Networking** | Ktor Client + Ktorfit |
+| **Async** | Kotlin Coroutines & Flow |
+| **Serialization** | Kotlinx Serialization |
+| **Image Loading** | Coil |
+
+**SDK Requirements:**
+- Min SDK: 26
+- Target SDK: 35
+
+---
+
+## Project Structure
+
+```
+Premiere/
+├── composeApp/
+│   ├── src/
+│   │   ├── commonMain/   # Shared logic & MVI
+│   │   └── androidMain/  # Android-specific implementation
+├── gradle/
+└── build.gradle.kts
+```
+
+**Modules:**
+- `commonMain` — Contains code common to all targets (business logic, MVI, shared models).
+- `androidMain` — Contains Android-specific implementations and platform APIs.
+
+---
+
+## Getting Started
+
+### Requirements
+
+- Android Studio (latest stable recommended)
+- JDK 17+
+- Android device or emulator (API level 26+)
+
+### Build & Run
+
+**On macOS/Linux:**
+
+```bash
+./gradlew :composeApp:assembleDebug
+```
+
+**On Windows:**
+
+```powershell
+.\gradlew.bat :composeApp:assembleDebug
+```
+
+**Install on a connected device:**
+
+```powershell
+.\gradlew :composeApp:installDebug
+```
+
+**Run Unit Tests:**
+
+```powershell
+.\gradlew :composeApp:test
+```
+
+---
+
+## Contributing
+
+- TODO: Add contribution guidelines
+- TODO: Add code style / formatting rules
+- TODO: Add PR template
+
+---
+
+## License
+
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for more information.
+
