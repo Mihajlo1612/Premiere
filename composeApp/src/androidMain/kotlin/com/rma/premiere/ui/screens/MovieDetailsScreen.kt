@@ -172,7 +172,7 @@ fun MovieDetaisScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
-                            .offset(y = (-40).dp),
+                            .offset(y = (-60).dp),
                         verticalAlignment = Alignment.Bottom
                     ) {
                         AsyncImage(

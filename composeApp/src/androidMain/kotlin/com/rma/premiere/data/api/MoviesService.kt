@@ -7,14 +7,8 @@ import com.rma.premiere.data.model.MovieImages
 import com.rma.premiere.data.model.PaginatedResponse
 import com.rma.premiere.data.model.PersonSummary
 import com.rma.premiere.data.model.Video
-import kotlinx.serialization.json.Json
 
 class MoviesService(private val api: MoviesApi) {
-
-    private val json = Json {
-        ignoreUnknownKeys = true
-        isLenient = true
-    }
 
     suspend fun getMovies(
         page: Int = 1,
